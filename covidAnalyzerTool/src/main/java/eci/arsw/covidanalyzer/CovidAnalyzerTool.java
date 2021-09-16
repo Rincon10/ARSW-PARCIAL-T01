@@ -1,5 +1,7 @@
 package eci.arsw.covidanalyzer;
 
+import eci.arsw.covidanalyzer.threads.TestThread;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,6 +24,7 @@ public class CovidAnalyzerTool {
     private TestReader testReader;
     private int amountOfFilesTotal;
     private AtomicInteger amountOfFilesProcessed;
+    public static List<TestThread> threads;
 
     public CovidAnalyzerTool() {
         resultAnalyzer = new ResultAnalyzer();
@@ -42,6 +45,37 @@ public class CovidAnalyzerTool {
         }
     }
 
+    public void processResultData( int numberOfData ) {
+        amountOfFilesProcessed.set(0);
+        List<File> resultFiles = getResultFileList();
+        amountOfFilesTotal = resultFiles.size();
+        for (File resultFile : resultFiles) {
+            List<Result> results = testReader.readResultsFromFile(resultFile);
+            for (Result result : results) {
+                resultAnalyzer.addResult(result);
+            }
+            amountOfFilesProcessed.incrementAndGet();
+        }
+    }
+
+    private void prepareThreads(int numberOfThreads, int partition, int amountOfFilesTotal, List<File> csvFiles) {
+        threads = new ArrayList<>();
+        int start = 0;
+        int end;
+        for (int i = 0; i < numberOfThreads; i++) {
+
+            end = start + partition;
+            end+= ( i == 0 )? amountOfFilesTotal%numberOfThreads :0 ;
+
+            threads.add(new TestThread(start , end ,csvFiles));
+
+            //System.out.println(start+" "+end);
+            start = end;
+
+        }
+    }
+
+
     private List<File> getResultFileList() {
         List<File> csvFiles = new ArrayList<>();
         try (Stream<Path> csvFilePaths = Files.walk(Paths.get("src/main/resources/")).filter(path -> path.getFileName().toString().endsWith(".csv"))) {
@@ -61,12 +95,14 @@ public class CovidAnalyzerTool {
      * A main() so we can easily run these routing rules in our IDE
      */
     public static void main(String... args) throws Exception {
+        int numberOfThreads = 5;
         CovidAnalyzerTool covidAnalyzerTool = new CovidAnalyzerTool();
-        Thread processingThread = new Thread(() -> covidAnalyzerTool.processResultData());
-        processingThread.start();
+        covidAnalyzerTool.processResultData(numberOfThreads);
+
         while (true) {
+            System.out.println("Escribe algo");
             Scanner scanner = new Scanner(System.in);
-            String line = scanner.nextLine();
+            String line = scanner.nextLine( );
             if (line.contains("exit"))
                 break;
             String message = "Processed %d out of %d files.\nFound %d positive people:\n%s";
