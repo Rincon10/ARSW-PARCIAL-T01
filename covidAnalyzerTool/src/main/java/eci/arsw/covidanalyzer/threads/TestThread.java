@@ -1,5 +1,9 @@
 package eci.arsw.covidanalyzer.threads;
 
+import eci.arsw.covidanalyzer.CovidAnalyzerTool;
+import eci.arsw.covidanalyzer.Result;
+import eci.arsw.covidanalyzer.TestReader;
+
 import java.io.File;
 import java.util.List;
 
@@ -30,11 +34,16 @@ public class TestThread extends Thread {
             notifyAll();
         }
     }
-    
+
     @Override
     public void run() {
         for (int i = a; i < b; i++) {
 
+            List<Result> results = CovidAnalyzerTool.testReader.readResultsFromFile(csvFiles.get(i));
+            for (Result result : results) {
+                CovidAnalyzerTool.resultAnalyzer.addResult(result);
+            }
+            CovidAnalyzerTool.amountOfFilesProcessed.incrementAndGet();
         }
     }
 }
