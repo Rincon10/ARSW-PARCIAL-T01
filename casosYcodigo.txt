@@ -1,0 +1,30 @@
+54732347-fba2-4df7-aff9-006b8c400eb7 - Dian - Tyre
+3f625efa-8930-4787-8105-84890c5616f3 - Nickolai - Clapperton
+dc94daff-cbfd-42a9-af4b-9a98f77e9599 - Edna - Brackenbury
+b7f821d2-e301-46dd-89c4-bbb94d892c0e - Deb - Danihelka
+718118fc-2fe6-4bcf-b007-570d83a0c9f3 - Ariadne - Eddow
+c5b9fc3c-bff6-4394-a6cb-2434f7795070 - Junia - Dericot
+04103756-268d-4a4b-9ad2-e38fda836447 - Gui - McGurk
+54f299ce-71ff-440a-8824-714995bad407 - Eugenie - Screase
+e186b37f-7ca7-4e6d-a7e3-88d9392b8a3e - Cheryl - Trime
+7c5e7239-0d32-49a8-b245-0026b4a48425 - Ari - Keates
+1f4d394c-de8f-489f-9002-e9d75aa22f46 - Konstance - Deniscke
+da27bc0a-8275-409a-b32f-3b75edf45d4e - Elladine - Sitlinton
+e3cf48fa-015a-4e64-8a54-6dcdfead091d - Cobbie - Martschik
+08223483-6e84-41a2-a148-0a30ca77faac - Pasquale - Lansley
+ad431cb1-2c38-4156-9156-e36a16e9e06d - Robena - Gossage
+bee0ea80-7b46-4f7e-8edd-8021ae193c99 - Enrika - Cossom
+5d3689ba-47c7-463c-8df5-f548a5c1c823 - Laney - Shotter
+d35f2118-b28e-4127-9878-8e263a8fb916 - Alexia - Halvorsen
+eeec0aff-c659-4e28-8ff2-704f08e31312 - Francisca - Pinchon
+66ec3267-f59a-4e62-866e-ac6e7bd89a9a - Tamar - Robbey
+da546993-108a-403b-9707-0596069e574f - Candida - Langton
+ccbb7437-f57e-43d1-8df2-84f4991ff200 - Doti - Frick
+d6d0c72c-1fb7-4810-87b0-890ee3ae8371 - Wilmar - Mackrell
+57c11bb5-c7c8-4304-89a5-a097ede67057 - Jilleen - Goldsby
+04302087-be05-4536-9b78-cc0f25dd9d15 - Ferdy - Halfacree
+6061e411-e847-4cc7-88c0-5d0df36a7669 - Alameda - Padley
+
+
+$ curl -i -X POST -HContent-Type:application/json -HAccept:application/json http://localhost:8080/covid/result/true-positive -d '{"id":"54732347-fba2-4df7-aff9-006b8c400eb7","name":"Dian - Tyre"}'
+
