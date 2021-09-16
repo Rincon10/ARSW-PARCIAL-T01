@@ -6,6 +6,8 @@ import eci.arsw.covidanalyzer.TestReader;
 
 import java.io.File;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Iván Camilo Rincón Saavedra
@@ -37,13 +39,26 @@ public class TestThread extends Thread {
 
     @Override
     public void run() {
-        for (int i = a; i < b; i++) {
+        csvFiles.forEach( file ->{
+            while ( stop ){
+                try {
+                    wait();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(TestThread.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
 
-            List<Result> results = CovidAnalyzerTool.testReader.readResultsFromFile(csvFiles.get(i));
+            List<Result> results = CovidAnalyzerTool.testReader.readResultsFromFile(file);
+
+
             for (Result result : results) {
+//                System.out.println(this.getName()+" "+result);
                 CovidAnalyzerTool.resultAnalyzer.addResult(result);
             }
             CovidAnalyzerTool.amountOfFilesProcessed.incrementAndGet();
-        }
+        } );
+
+
+        System.out.println("termine");
     }
 }

@@ -25,11 +25,12 @@ public class CovidAnalyzerTool {
     public static int amountOfFilesTotal;
     public static AtomicInteger amountOfFilesProcessed;
     public static List<TestThread> threads;
+    public static boolean stop = false;
 
     public CovidAnalyzerTool() {
         resultAnalyzer = new ResultAnalyzer();
         testReader = new TestReader();
-        amountOfFilesProcessed = new AtomicInteger();
+        amountOfFilesProcessed = new AtomicInteger(0);
     }
 
     public void processResultData() {
@@ -47,7 +48,6 @@ public class CovidAnalyzerTool {
 
     public void processResultData( int numberOfThreads ) {
         List<File> resultFiles = getResultFileList();
-        amountOfFilesProcessed.set(0);
         amountOfFilesTotal = resultFiles.size();
 
         int partition = amountOfFilesTotal/numberOfThreads;
@@ -65,10 +65,13 @@ public class CovidAnalyzerTool {
 
             end = start + partition;
             end+= ( i == 0 )? amountOfFilesTotal%numberOfThreads :0 ;
+            ArrayList<File> temp = new ArrayList<File>();
+            for (int j = start; j < end; j++) {
+                temp.add(csvFiles.get(j));
+            }
+            threads.add(new TestThread(start , end ,temp));
 
-            threads.add(new TestThread(start , end ,csvFiles));
-
-            //System.out.println(start+" "+end);
+            System.out.println(start+" "+end);
             start = end;
 
         }
@@ -81,7 +84,16 @@ public class CovidAnalyzerTool {
         message = String.format(message, covidAnalyzerTool.amountOfFilesProcessed.get(), covidAnalyzerTool.amountOfFilesTotal, positivePeople.size(), affectedPeople);
         System.out.println(message);
     }
+    private static void continueAllThreads() {
+        System.out.println("=================================Continuando=================================");
+        threads.forEach( t -> t.resumeThread() );
 
+    }
+
+    private static void pauseAllThreads() {
+        System.out.println("=================================Pausado====================================");
+        threads.forEach( t -> t.stopThread() );
+    }
 
     private List<File> getResultFileList() {
         List<File> csvFiles = new ArrayList<>();
@@ -102,26 +114,33 @@ public class CovidAnalyzerTool {
      * A main() so we can easily run these routing rules in our IDE
      */
     public static void main(String... args) throws Exception {
-        int numberOfThreads = 22;
+        int numberOfThreads =5;
         CovidAnalyzerTool covidAnalyzerTool = new CovidAnalyzerTool();
         covidAnalyzerTool.processResultData(numberOfThreads);
 
-        threads.forEach(t-> {
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-        System.out.println("Presione enter");
+
+
         while (true) {
+            System.out.println("====================Presione enter====================");
             Scanner scanner = new Scanner(System.in);
             String line = scanner.nextLine( );
+            stop=!stop;
+            if( stop ){
+                pauseAllThreads();
+                printMessage(covidAnalyzerTool);
+            }
+            else{
+                continueAllThreads();
+            }
+
             if (line.contains("exit"))
                 break;
-            printMessage(covidAnalyzerTool);
+
         }
+        printMessage(covidAnalyzerTool);
     }
+
+
 
 }
 
