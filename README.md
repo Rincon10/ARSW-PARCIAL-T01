@@ -61,6 +61,7 @@ $ git commit -m "entrega parcial - Juan Perez"
 
 ```bash
 $ zip -r APELLIDO.NOMBRE.zip .
+
 ```
 
 5. Abra el archivo ZIP creado, y rectifique que contenga lo desarrollado.
